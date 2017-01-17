@@ -17,7 +17,7 @@ ENDING_CHAR = ['ๆ', 'ฯ']
 
 class Tokenizer(object):
 
-    def __init__(self):
+    def __init__(self, remove_stopword=False):
         self.dictionary = []
         self.negation_dictionary = []
         self.stopdict = []
@@ -37,51 +37,26 @@ class Tokenizer(object):
                 self.stopdict.append(line.rstrip())
 
         self.trie = marisa_trie.Trie(self.dictionary)
-        self.removeRepeat = True
-        self.stopNumber = False
-        self.stopword = False
-        self.removeSpaces = True
-        self.minLength = 1
-        self.removeNonCharacter = False
-        self.case_sensitive = True
-        self.ngram = (1,1)
+        self.remove_stopword = remove_stopword
 
     def normalize(self, word):
-        if self.stopNumber and word.isdigit():
-            return False
-
-        if self.removeSpaces and word.isspace():
-            return False
-
-        if len(word) < self.minLength:
-            return False
-
-        if self.removeNonCharacter:
-            match = re.search(u"[0-9A-Za-z\u0E00-\u0E7F]+", word)
-            if not match:
-                return False
-
+        # remove repeat
+        # remove space
+        # remove special characters
         return True
 
-    def remove_stopwords(self, wordArray):
-        for dd in self.stopdict:
+    def remove_stopwords(self, tokens):
+        for stopword in self.stopdict:
             try:
-                if self.case_sensitive:
-                    wordArray.remove(dd)
-                else:
-                    wordArray.remove(dd.lower())
+                tokens.remove(stopword.lower())
             except ValueError:
                 pass
-
-        return wordArray
+        return tokens
 
     def search_special_characters(self, characters):
         match = re.search(u"[A-Za-z\d]*", characters)
         if match.group(0):
-            if not self.case_sensitive:
-                return match.group(0).lower()
-            else:
-                return match.group(0)
+            return match.group(0).lower()
         else:
             return None
 
@@ -102,12 +77,10 @@ class Tokenizer(object):
 
         return False
 
-    # Find longest matching in Trie if match return id else return -1
     def longest_matching(self, text, begin_position):
         N = len(text)
         characters = text[begin_position:N]
 
-        # check latin words and digits
         match = self.search_special_characters(characters)
         if match:
             return match
@@ -126,7 +99,6 @@ class Tokenizer(object):
                 word_valid = word
 
             try:
-                # Special check for case like ๆ
                 if characters[len(word_valid)] in ENDING_CHAR:
                     return characters[0:(len(word_valid) + 1)]
                 else:
@@ -134,7 +106,7 @@ class Tokenizer(object):
             except:
                 return word_valid
         else:
-            return -1;
+            return '';
 
     def segment_text(self, text):
         begin_position = 0
@@ -143,7 +115,7 @@ class Tokenizer(object):
         token_statuses = []
         while(begin_position < N):
             match = self.longest_matching(text, begin_position)
-            if match == -1:
+            if not match:
                 if not text[begin_position].isspace() \
                     and (text[begin_position] in FRONT_DEP_CHAR \
                     or text[begin_position - 1] in REAR_DEP_CHAR \
@@ -162,22 +134,13 @@ class Tokenizer(object):
                     tokens.append(match)
                     token_statuses.append('known')
                 begin_position += len(match)
-        return tokens;
 
-    def find_ngrams(self, input_list, n):
-        return zip(*[input_list[i:] for i in range(n)])
+        return tokens;
 
     def tokenize(self, text):
         tokens = self.segment_text(text)
-        if self.stopword:
+
+        if self.remove_stopword:
             tokens = self.remove_stopwords(tokens)
 
-        lastresult = []
-        for x in range(self.ngram[0], self.ngram[1]+1):
-            for r in self.find_ngrams(tokens, x):
-                match = re.search(u"[A-Za-z\d]+", ''.join(r))
-                if not match:
-                    lastresult.append(''.join(r))
-                else:
-                    lastresult.append(' '.join(r))
-        return lastresult
+        return tokens
