@@ -20,6 +20,3 @@ def test_longest_matching():
 
 def test_longest_matching_of_special_characters():
     assert tokenizer.longest_matching("อื่นๆ", 0) == 'อื่นๆ'
-
-def test_remove_stopwords():
-    assert tokenizer.remove_stopwords(["เรา", "จะ", "ทำ"]) == ["ทำ"]
