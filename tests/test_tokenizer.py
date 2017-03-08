@@ -5,9 +5,9 @@ from thai_sentiment import Tokenizer
 tokenizer = Tokenizer()
 
 def test_tokenize():
-    assert tokenizer.tokenize("ประเทศไทยมีบริการเทเลเท็กซ์ kbank มานานเกินกว่า 4 ปีแล้ว") == [
+    assert tokenizer.tokenize("ประเทศไทยมีบริการเทเลเท็กซ์ kbank มานานเกินกว่า 4 ปีแล้วไ") == [
             'ประเทศไทย', 'มี', 'บริการ', 'เท', 'เล', 'เท็กซ์', ' ', 'kbank', ' ', 'มา', 'นาน', 'เกิน',
-            'กว่า', ' ', '4', ' ', 'ปี', 'แล้ว']
+            'กว่า', ' ', '4', ' ', 'ปี', 'แล้ว', 'ไ']
 
 def test_search_special_characters():
     assert tokenizer.search_special_characters("kbank") == 'kbank'

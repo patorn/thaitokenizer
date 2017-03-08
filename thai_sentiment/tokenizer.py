@@ -3,10 +3,10 @@ import os
 import glob
 import pdb
 
-import marisa_trie
+import marisa_trie as marisa_trie
 
 REPO_DIR = os.getenv('data', '.')
-DICTIONARY_PATH = '{0}/data/tokenizer/dict/'.format(REPO_DIR)
+DICT_PATH = '{0}/data/tokenizer/dict/'.format(REPO_DIR)
 
 FRONT_DEP_CHAR = ['ะ', 'ั', 'า ', 'ำ', 'ิ', 'ี', 'ึ', 'ื', 'ุ', 'ู', 'ๅ', '็', '์', 'ํ']
 REAR_DEP_CHAR = ['ั', 'ื', 'เ', 'แ', 'โ', 'ใ', 'ไ', 'ํ']
@@ -15,12 +15,13 @@ ENDING_CHAR = ['ๆ', 'ฯ']
 
 class Tokenizer(object):
 
-    def __init__(self):
+    def __init__(self, dictionary_path=DICT_PATH):
         self._dictionary = []
+        self._dictionary_path = dictionary_path
 
-        for file in os.listdir(DICTIONARY_PATH):
+        for file in os.listdir(self._dictionary_path):
             if file.endswith('.txt'):
-              with open(DICTIONARY_PATH + file) as file:
+              with open(self._dictionary_path + file) as file:
                   for line in file:
                       self._dictionary.append(line.rstrip())
 
@@ -93,7 +94,8 @@ class Tokenizer(object):
         while(begin_position < N):
             match = self.longest_matching(text, begin_position)
             if not match:
-                if not text[begin_position].isspace() \
+                if begin_position != 0 and \
+                    not text[begin_position].isspace() \
                     and (text[begin_position] in FRONT_DEP_CHAR \
                     or text[begin_position - 1] in REAR_DEP_CHAR \
                     or text[begin_position] in TONAL_CHAR \
@@ -105,7 +107,8 @@ class Tokenizer(object):
                     token_statuses.append('unknown')
                 begin_position += 1
             else:
-                if text[begin_position - 1] in REAR_DEP_CHAR:
+                if begin_position != 0 \
+                    and text[begin_position - 1] in REAR_DEP_CHAR:
                     tokens[-1] += match
                 else:
                     tokens.append(match)

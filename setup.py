@@ -17,9 +17,6 @@ setup(
     author_email='patorn.u@gmail.com',
     url='https://github.com/patorn/thai-sentiment',
     license=license,
-    install_requires=[
-        'marisa-trie >= 0.7.2',
-    ],
     tests_require=[
         'pytest',
         'pylint',
