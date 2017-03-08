@@ -2,6 +2,7 @@
 
 # Data
 data/tokenizer/tdict
+data/raw
 
 # C extensions
 *.so
