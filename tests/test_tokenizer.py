@@ -1,6 +1,6 @@
 import pytest
 
-from thai_sentiment import Tokenizer
+from thaitokenizer.tokenizer import Tokenizer
 
 tokenizer = Tokenizer()
 

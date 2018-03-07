@@ -5,8 +5,8 @@ import pdb
 
 import marisa_trie as marisa_trie
 
-REPO_DIR = os.getenv('data', '.')
-DICT_PATH = '{0}/data/tokenizer/dict/'.format(REPO_DIR)
+REPO_DIR = os.getenv('config', '.')
+DICT_PATH = '{0}/config/tokenizer/dict/'.format(REPO_DIR)
 
 FRONT_DEP_CHAR = ['ะ', 'ั', 'า ', 'ำ', 'ิ', 'ี', 'ึ', 'ื', 'ุ', 'ู', 'ๅ', '็', '์', 'ํ']
 REAR_DEP_CHAR = ['ั', 'ื', 'เ', 'แ', 'โ', 'ใ', 'ไ', 'ํ']
